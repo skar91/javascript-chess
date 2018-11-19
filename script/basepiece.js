@@ -111,25 +111,16 @@ queen_black = new queen('black', null, null, 9, 'bx');
 Object.preventExtensions(queen_white);
 Object.preventExtensions(queen_black);
 
-
-function assert(condition) {
-    if(!condition) {
-        console.log("assertion failed!")
-    }
-    else {
-        console.log("success");
-    }
-}
-
+//Test cases
 function testcases() {
     console.log("testing extensibility...");
+    const extensibleErrorMsg = "object is not extensible";
     for(i=0; i<8; i++) {
-        assert(Object.isExtensible(pawn_white[i]));
-        assert(Object.isExtensible(pawn_black[i]));
+        console.assert(Object.isExtensible(pawn_white[i]), {object: pawn_white[i], error: extensibleErrorMsg});
     }
-    //assert(pawn_white[0].color == "white");
 }
 
+//Chess board is a 2D array of 8x8
 function initBoard() {
     chess_board = new Array(8);
     for(i=0; i<8; i++) {
@@ -143,7 +134,9 @@ function initBoard() {
     }
 }
 
+//Set initial position of each element on the board
 function initPositions() {
+
     //Init Pawn postions
     for(i=0; i<8; i++) {
         chess_board[1][i]=pawn_black[i].id;
