@@ -186,14 +186,33 @@ function initPositions() {
     queen_black.position = [0,4];
     chess_board[7][4] = queen_white.id;
     queen_white.position = [0,4];
-
 }
 
 function display() {
     initBoard();
     initPositions();
-    console.log(chess_board);
 
-    console.log(pawn_white);
+    var table = document.getElementById("myTable");
+
+    for(i=0; i<8; i++) {
+        var row = table.insertRow(i);
+        for(j=0; j<8; j++) {
+            var cell = row.insertCell(j);
+            cell.innerHTML = '<img src="./images/bb.svg"> </img>';
+        }
+    }
+    
+    // var p = document.getElementById("test");
+    // p.innerHTML = 
+
+    /*var row = table.insertRow(0);
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);*/
+
+    /*cell1.innerHTML = "lul";
+    cell2.innerHTML = "lulw";*/
+    
+    // console.log(chess_board);
+    // console.log(pawn_white);
 }
 
