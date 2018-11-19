@@ -130,9 +130,77 @@ function testcases() {
     //assert(pawn_white[0].color == "white");
 }
 
+function initBoard() {
+    chess_board = new Array(8);
+    for(i=0; i<8; i++) {
+        chess_board[i]=new Array(8);
+    }
+
+    for(i=0; i<8; i++) {
+        for(j=0; j<8; j++) {
+            chess_board[i][j]=0;
+        }
+    }
+}
+
+function initPositions() {
+    //Init Pawn postions
+    for(i=0; i<8; i++) {
+        chess_board[1][i]=pawn_black[i].id;
+        pawn_black[i].position=[1,i];
+        chess_board[6][i]=pawn_white[i].id;
+        pawn_white[i].position=[6,i];
+    }
+
+    //Init Rooks
+    chess_board[0][0] = rook_black[0].id;
+    chess_board[0][7] = rook_black[1].id;
+    rook_black[0].position = [0,0];
+    rook_black[1].position = [0,7];
+    chess_board[7][0] = rook_white[0].id;
+    chess_board[7][7] = rook_white[1].id;
+    rook_white[0].position = [7,0];
+    rook_white[1].position = [7,7];
+
+    //Init knights
+    chess_board[0][1] = knight_black[0].id;
+    chess_board[0][6] = knight_black[1].id;
+    knight_black[0].position = [0,1];
+    knight_black[1].position = [0,6];
+    chess_board[7][1] = knight_white[0].id;
+    chess_board[7][6] = knight_white[1].id;
+    knight_black[0].position = [7,1];
+    knight_black[1].position = [7,6];
+
+    //Init bishops
+    chess_board[0][2] = bishop_black[0].id;
+    chess_board[0][5] = bishop_black[1].id;
+    bishop_black[0].position = [0,2];
+    bishop_black[1].position = [0,5];
+    chess_board[7][2] = bishop_white[0].id;
+    chess_board[7][5] = bishop_white[1].id;
+    bishop_black[0].position = [7,2];
+    bishop_black[1].position = [7,5];
+
+    //Init kings
+    chess_board[0][3] = king_black.id;
+    king_black.position = [0,3];
+    chess_board[7][3] = king_white.id;
+    king_white.position = [0,3];
+    
+    //Init queens
+    chess_board[0][4] = queen_black.id;
+    queen_black.position = [0,4];
+    chess_board[7][4] = queen_white.id;
+    queen_white.position = [0,4];
+
+}
 
 function display() {
-    pawn_white[0].movement();
-    console.dir(pawn_black);
+    initBoard();
+    initPositions();
+    console.log(chess_board);
+
+    console.log(pawn_white);
 }
 
