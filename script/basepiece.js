@@ -117,15 +117,31 @@ for(i=0; i<2; i++)
     Object.preventExtensions(bishop_black[i]);
 }
 
-king_white = new king(COLOR.white, null, IMAGE_SOURCE_TAG.whiteking, PointsTable.king_point, 'wv0');
-king_black = new king(COLOR.black, null, IMAGE_SOURCE_TAG.blackking, PointsTable.king_point, 'bv1');
+king_white = new king(COLOR.white, [7,3], IMAGE_SOURCE_TAG.whiteking, PointsTable.king_point, 'wv0');
+king_black = new king(COLOR.black, [0,3], IMAGE_SOURCE_TAG.blackking, PointsTable.king_point, 'bv1');
 Object.preventExtensions(king_white);
 Object.preventExtensions(king_black);
 
-queen_white = new queen(COLOR.white, null, IMAGE_SOURCE_TAG.whitequeen, PointsTable.queen_point, 'wx0');
-queen_black = new queen(COLOR.black, null, IMAGE_SOURCE_TAG.blackqueen, PointsTable.queen_point, 'bx1');
+queen_white = new queen(COLOR.white, [7,4], IMAGE_SOURCE_TAG.whitequeen, PointsTable.queen_point, 'wx0');
+queen_black = new queen(COLOR.black, [0,4], IMAGE_SOURCE_TAG.blackqueen, PointsTable.queen_point, 'bx1');
 Object.preventExtensions(queen_white);
 Object.preventExtensions(queen_black);
+
+/*
+Set positions of remaining pieces
+*/
+rook_black[0].position = [0,0];
+rook_black[1].position = [0,7];
+rook_white[0].position = [7,0];
+rook_white[1].position = [7,7];
+knight_black[0].position = [0,1];
+knight_black[1].position = [0,6];
+knight_white[0].position = [7,1];
+knight_white[1].position = [7,6];
+bishop_black[0].position = [0,2];
+bishop_black[1].position = [0,5];
+bishop_white[0].position = [7,2];
+bishop_white[1].position = [7,5];
 
 //Test cases
 function testcases() {
@@ -136,7 +152,12 @@ function testcases() {
     }
 }
 
-//Chess board is a 2D array of 8x8
+/*
+Chess board is a 2D array of 8x8.
+The value of a square represents if its empty or occupied.
+For eg: position [3,4] = 0 =>  empty
+        position [5,6] = 'bk1' => black knight
+*/
 function initBoard() {
     chess_board = new Array(8);
     for(i=0; i<8; i++) {
@@ -148,40 +169,32 @@ function initBoard() {
             chess_board[i][j]=0;
         }
     }
-}
-
-//Set initial position of each element
-function initPositions() {
-    //Init Rooks
-    rook_black[0].position = [0,0];
-    rook_black[1].position = [0,7];
-    rook_white[0].position = [7,0];
-    rook_white[1].position = [7,7];
-
-    //Init knights
-    knight_black[0].position = [0,1];
-    knight_black[1].position = [0,6];
-    knight_white[0].position = [7,1];
-    knight_white[1].position = [7,6];
-
-    //Init bishops
-    bishop_black[0].position = [0,2];
-    bishop_black[1].position = [0,5];
-    bishop_white[0].position = [7,2];
-    bishop_white[1].position = [7,5];
-
-    //Init kings  
-    king_black.position = [0,3];
-    king_white.position = [7,3];
+    for(i=0;i<8;i++) {
+        chess_board[1][i]=pawn_black[i].id;
+        chess_board[6][i]=pawn_black[i].id;
+    }
+    chess_board[0][0] = rook_black[0].id;
+    chess_board[0][7] = rook_black[1].id;
+    chess_board[7][0] = rook_white[0].id;
+    chess_board[7][7] = rook_white[1].id;
+    chess_board[0][1] = knight_black[0].id;
+    chess_board[0][6] = knight_black[1].id;
+    chess_board[7][1] = knight_white[0].id;
+    chess_board[7][6] = knight_white[1].id;
+    chess_board[0][2] = bishop_black[0].id;
+    chess_board[0][5] = bishop_black[1].id;
+    chess_board[7][2] = bishop_white[0].id;
+    chess_board[7][5] = bishop_white[1].id;
+    chess_board[0][2] = king_black[0].id;
+    chess_board[0][5] = king_black[1].id;
+    chess_board[7][2] = queen_white[0].id;
+    chess_board[7][5] = queen_white[1].id;
     
-    //Init queens
-    queen_black.position = [0,4];
-    queen_white.position = [7,4];
+
 }
 
 function display() {
     initBoard();
-    initPositions();
 
     var table = document.getElementById("myTable");
 
@@ -191,9 +204,7 @@ function display() {
             var cell = row.insertCell(j);
             cell.innerHTML = chess_board[i][j];
         }
-    }
-
-   
+    }   
     console.log(pawn_white);
     console.log(knight_white);
 
