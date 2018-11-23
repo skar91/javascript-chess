@@ -41,11 +41,97 @@ class pawn extends BasePiece {
     constructor(color,position,image,point,id) {
         super(color,position,image,point,id);
     }
+
+    validMoves() {
+        var validcoordinates =[];
+        var x = this.position[0];
+        var y = this.position[1];
+        if(this.id=='wp') {
+            if(x==6 && chess_board[4][y-2][0]!='w') {
+                 validcoordinates.push([4][y-2]);
+            }
+            if(chess_board[x-1][y-1][0]=='b') {
+                validcoordinates.push([x-1,y-1]);
+            }
+            if(chess_board[x+1][y-1][0]=='b') {
+                validcoordinates.push([x+1][y-1]);
+            }
+            if(chess_board[x][y-1]!='w' && chess_board[x][y-1]!='b') {
+                validcoordinates.push([x,y-1]);
+            }
+        }
+        else {
+           if(x==1 && chess_board[3][y+2][0]!='b') {
+                validcoordinates.push([3][y+2]);
+           }
+           if(chess_board[x+1][y+1][0]=='w') {
+               validcoordinates.push([x+1,y+1]);
+           }
+           if(chess_board[x-1][y+1][0]=='w') {
+               validcoordinates.push([x-1][y+1]);
+           }
+           if(chess_board[x][y+1]!='w' && chess_board[x][y+1]!='b') {
+               validcoordinates.push([x,y+1]);
+           }
+        }
+        return validcoordinates;
+    }
 }
 
 class rook extends BasePiece {
     constructor(color,position,image,point,id) {
         super(color,position,image,point,id);
+    }
+    validMoves() {
+        var validcoordinates = [];
+        var x = this.position[0];
+        var y = this.position[1];
+        opp_color = this.color=='white' ? 'b' : 'w';
+        /*Right*/
+        for(i = x + 1 ; i < 8 ; i++) {
+            if(chess_board[i][y][0]==this.color[0]) {
+                break;
+            }
+            else if(chess_board[i][y][0]==opp_color) {
+                validcoordinates.push([i,y]);
+                break;
+            }
+            validcoordinates.push([i,y]);
+        }
+        /*Left*/
+        for(i = x - 1 ; i > -1 ; i--) {
+            if(chess_board[i][y][0]==this.color[0]) {
+                break;
+            }
+            else if(chess_board[i][y][0]==opp_color) {
+                validcoordinates.push([i,y]);
+                break;
+            }
+            validcoordinates.push([i,y]);
+        }
+        /*Down*/
+        for(i = y + 1 ; i < 8 ; i++) {
+            if(chess_board[x][i][0]==this.color[0]) {
+                break;
+            }
+            else if(chess_board[x][i][0]==opp_color) {
+                validcoordinates.push([x,i]);
+                break;
+            }
+            validcoordinates.push([x,i]);
+        }
+        /*Up*/
+        for(i = y - 1 ; i > -1 ; i--) {
+            if(chess_board[x][i][0]==this.color[0]) {
+                break;
+            }
+            else if(chess_board[x][i][0]==opp_color) {
+                validcoordinates.push([x,i]);
+                break;
+            }
+            validcoordinates.push([x,i]);
+        }
+        return validcoordinates;
     }
 }
 
@@ -71,6 +157,10 @@ class queen extends BasePiece {
     constructor(color,position,image,point,id) {
         super(color,position,image,point,id);
     }
+}
+
+const fun = () => () => {
+
 }
 
 var white_pieces = [];
