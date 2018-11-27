@@ -1,6 +1,21 @@
+#game {
+    background-color: #1f535c;
+    height: 100%;
+    width: 65%;
+    position: absolute;
+    float: left;
+    border: 0px;
+    margin: 0px;
+    top: 0px;
+    left: 0px;
+}
+
+html {
+    background-color: #052439; 
+}
 table {
     margin-top: 5%;
-    margin-left: 10%;
+    margin-left: 20%;
     border: 2px solid darkgray;
 }
 td {
@@ -29,5 +44,63 @@ img {
     width: 100%;
     height: auto;
     display: block;
+}
 
+.wt {
+    margin-left: 30%;
+    margin-top: 5%;
+    height: 75px;
+    width: 350px;
+    background-color: white;
+    border: 2px black solid;
+    color: black;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 75px;
+    font-family: 'Maven Pro', sans-serif;
+    font-size: 35px;
+}   
+
+.bt {
+    margin-left: 30%;
+    margin-top: 5%;
+    height: 75px;
+    width: 350px;
+    background-color: black;
+    border: 2px white solid;
+    color: white;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 75px;
+    font-family: 'Maven Pro', sans-serif;
+    font-size: 35px;
+}
+
+#branding {
+    vertical-align:middle;
+    margin-top: 200px;
+}
+
+#chess {
+    font-size: 200px;
+    color: #85b99c;
+    margin-left: 70%;
+    font-family: 'Lobster', cursive;
+    margin-bottom: 20px;
+    line-height: 100px;
+    margin-top: 50px;
+}
+
+#js {
+    font-size: 100px;
+    color: #f7e714;
+    margin-left: 78%;
+    margin-top: 10px;
+    margin-bottom: 0px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+hr {
+ margin-left: 50%;
+ margin-right: 0px;
 }
