@@ -44,19 +44,17 @@ class pawn extends BasePiece {
         super(id);
     }
 
-    validMoves(current_position,color) {
+    validMoves(x,y,color) {
         validcoordinates = [];
-        let x = current_position[0];
-        let y = current_position[1];
         if(color=='w') {
             if(x==6 && chess_board[4][y][0]!='w') {
-                 validcoordinates.push([4][y-2]);
+                 validcoordinates.push([4,y-2]);
             }
             if(chess_board[x-1][y-1][0]=='b') {
                 validcoordinates.push([x-1,y-1]);
             }
             if(chess_board[x-1][y+1][0]=='b') {
-                validcoordinates.push([x+1][y-1]);
+                validcoordinates.push([x+1,y-1]);
             }
             if(chess_board[x-1][y]!='w' && chess_board[x-1][y]!='b') {
                 validcoordinates.push([x,y-1]);
@@ -64,19 +62,19 @@ class pawn extends BasePiece {
         }
         else {
            if(x==1 && chess_board[3][y][0]!='b') {
-                validcoordinates.push([3][y]);
+                validcoordinates.push([3,y]);
            }
            if(chess_board[x+1][y-1][0]=='w') {
                validcoordinates.push([x+1,y-1]);
            }
            if(chess_board[x+1][y+1][0]=='w') {
-               validcoordinates.push([x+1][y+1]);
+               validcoordinates.push([x+1,y+1]);
            }
            if(chess_board[x+1][y]!='w' && chess_board[x+1][y]!='b') {
                validcoordinates.push([x+1,y]);
            }
         }
-        return validcoordinates;
+       // return validcoordinates;
     }
 }
 
@@ -84,10 +82,8 @@ class rook extends BasePiece {
     constructor(id) {
         super(id);
     }
-    validMoves(current_position,color) {
+    validMoves(x,y,color) {
         validcoordinates = [];
-        let x = current_position[0];
-        let y = current_position[1];
         let i = 0;
         opp_color = color=='w' ? 'b' : 'w';
         /*Right*/
@@ -134,7 +130,7 @@ class rook extends BasePiece {
             }
             validcoordinates.push([i,y]);
         }
-        return validcoordinates;
+       // return validcoordinates;
     }
 }
 
@@ -142,11 +138,9 @@ class knight extends BasePiece {
     constructor(id) {
         super(id);
     }
-    validMoves(current_position,color) {
+    validMoves(x,y,color) {
         validcoordinates = [];
-        let x = current_position[0];
-        let y = current_position[1];
-        opp_color = color=='w' ? 'b' : 'w';
+        //opp_color = color=='w' ? 'b' : 'w';
 
         /*Top*/
         if(x>=2) {
@@ -232,7 +226,7 @@ class knight extends BasePiece {
                 }
             }
         }
-        return validcoordinates;
+        //return validcoordinates;
     }
 }
 
@@ -240,10 +234,8 @@ class bishop extends BasePiece {
     constructor(id) {
         super(id);
     }
-    validMoves(current_position,color) {
+    validMoves(x,y,color) {
         validcoordinates = [];
-        let x = current_position[0];
-        let y = current_position[1];
         opp_color = color=='w' ? 'b' : 'w';
         /*Bottom-Left*/
         for(i = x + 1, j = y - 1 ; i < 8 && j >= 0 ; i++ , j--) {
@@ -289,15 +281,13 @@ class bishop extends BasePiece {
             }
             validcoordinates.push([x,i]);
         }
-        return validcoordinates;
+        //return validcoordinates;
     }
 }
 
 class king extends BasePiece {
-    validMoves(current_position,color) {
+    validMoves(x,y,color) {
         validcoordinates = [];
-        let x = current_position[0];
-        let y = current_position[1];
         opp_color = color=='w' ? 'b' : 'w';
         
         if((x-1) >= 0 && (y-1) >= 0) validcoordinates.push([x-1,y-1]);
@@ -309,7 +299,7 @@ class king extends BasePiece {
         if((x+1) < 8) validcoordinates.push([x+1,y]);
         if((x+1) < 8 && (y+1) < 8) validcoordinates.push([x+1,y+1]);    
         
-        return validcoordinates;
+        // validcoordinates;
     }
 }
 
@@ -317,10 +307,8 @@ class queen extends BasePiece {
     constructor(id) {
         super(id);
     }
-    validMoves(current_position,color) {
+    validMoves(x,y,color) {
         validcoordinates = [];
-        let x = current_position[0];
-        let y = current_position[1];
         opp_color = color=='w' ? 'b' : 'w';
 
         let temp_rook = new rook('temprook');
@@ -335,7 +323,7 @@ class queen extends BasePiece {
         validcoordinates2.forEach(function(element) {
             validcoordinates.push(element);
         });
-        return validcoordinates;
+        //return validcoordinates;
 
     }
 }
@@ -397,17 +385,66 @@ function initBoard() {
 
 }
 
-
-function dragStart() {
+/* Fired when a drag starts*/
+function dragStart(event) {
     var x = this.parentNode.parentNode.rowIndex;
     var y = this.parentNode.cellIndex;
-    
     console.log(x);
     console.log(y);
+
+    event.dataTransfer.setData("image/svg", event.target.outerHTML);
+    source = event.target.outerHTML;
+
+    console.dir(chess_board[x][y][1]);
+    console.dir(chess_board[x][y][0]);
+
+    col = chess_board[x][y][0];
+    pie = chess_board[x][y][1];
+
+    console.dir(piece[pie].validMoves(6,7,'w'));
 }
 
+/* Fired when a drag ends*/
 function dragEnd() {
-    console.log("drag ended");
+    //console.log("drag ended");
+}
+
+/* Fired when you drag over something*/
+function dragOver(event) {
+    event.preventDefault();
+    console.log("drag over");
+}
+
+function dragEnter(event) {
+    event.preventDefault();
+    console.log("drag enter");
+}
+
+function dragLeave() {
+    //console.log("drag leave");
+}
+
+function dragDrop(event) {
+    console.log("drag drop");
+    var x = event.target.parentNode.rowIndex;
+    var y = event.target.cellIndex;
+    console.dir(x);
+    console.log(y);
+    var data = event.dataTransfer.getData("image/svg");
+    console.dir(data);
+    event.target.innerHTML = data;
+
+    /*event.target.addEventListener('dragover',dragOver);
+    event.target.addEventListener('dragenter',dragEnter);
+    event.target.addEventListener('dragleave',dragLeave);
+    event.target.addEventListener('drop',dragDrop);*/
+
+    let imgs = document.getElementsByTagName("img");
+    for(i=0;i<imgs.length;i++)
+    {
+        imgs[i].addEventListener('dragstart', dragStart);
+        imgs[i].addEventListener('dragend', dragEnd);
+    }
 }
 
 function display() {
@@ -420,6 +457,10 @@ function display() {
         var row = table.insertRow(i);
         for(j=0; j<8; j++) {
             var cell = row.insertCell(j);
+            cell.addEventListener('dragover', dragOver);
+            cell.addEventListener('dragenter', dragEnter);
+            cell.addEventListener('dragleave', dragLeave);
+            cell.addEventListener('drop', dragDrop);
             if(chess_board[i][j]!='00') {
                 cell.innerHTML = IMAGE_SOURCE_TAG[chess_board[i][j]];
             }
@@ -438,6 +479,7 @@ function display() {
     }
     imgs = document.getElementsByTagName('img');
     //console.log(imgs);
+
     for(i=0;i<imgs.length;i++)
     {
         imgs[i].addEventListener('dragstart', dragStart);
