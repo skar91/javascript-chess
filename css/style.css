@@ -76,6 +76,21 @@ img {
     font-size: 35px;
 }
 
+#check {
+    float: left;
+    margin-left: 50%;
+    margin-top: 0px;
+    height: 75px;
+    width: 350px;
+    background-color: rgb(136, 31, 31);
+    border: 2px rgb(82, 19, 19) solid;
+    color: white;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 75px;
+    font-family: 'Maven Pro', sans-serif;
+    font-size: 35px;
+}
 #branding {
     vertical-align:middle;
     margin-top: 200px;

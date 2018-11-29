@@ -40,6 +40,7 @@ var chess_board;
 var source_x, source_y, target_x, target_y;
 var player_turn = 'w';
 var turn;
+var check = false;
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 class pawn extends BasePiece {
@@ -298,7 +299,6 @@ class bishop extends BasePiece {
 class king extends BasePiece {
     validMoves(x,y,color) {
         validcoordinates = [];
-                
         if((x-1) >= 0 && (y-1) >= 0 && chess_board[x-1][y-1][0]!=color) 
             validcoordinates.push([x-1,y-1]);
         if((x-1) >= 0 && chess_board[x-1][y][0]!=color) 
@@ -330,8 +330,9 @@ class queen extends BasePiece {
         let temp_rook = new rook('temprook');
         let temp_bishop = new bishop('tempbishop');
 
-        let validcoordinates1 = temp_rook.validMoves(x,y,color);
-        let validcoordinates2 = temp_bishop.validMoves(x,y,color);
+        /* Queen moves are same as rook + bishop combined */
+        let validcoordinates1 = temp_rook.validMoves(x,y,color);                           
+        let validcoordinates2 = temp_bishop.validMoves(x,y,color);                          
 
         validcoordinates1.forEach(function(element) {
             validcoordinates.push(element);
@@ -340,23 +341,9 @@ class queen extends BasePiece {
             validcoordinates.push(element);
         });
         return validcoordinates;
-
     }
 }
 
-function updateturncss(player_turn) {
-    let turn_text = document.getElementById('turn');
-    if(player_turn=='b') {
-        turn_text.className = 'bt';
-        turn_text.innerHTML = "BLACK'S TURN";
-    }
-    else {
-        turn_text.className = 'wt';
-        turn_text.innerHTML = "WHITE'S TURN";
-    }
-    
-    
-}
 function initPieces() {
     
     var p = new pawn('p');
@@ -413,21 +400,130 @@ function initBoard() {
     chess_board[7][4] = 'wq';
 
 }
+/*Update player's turn display text and styles*/
+function updateturncss(player_turn) {
+    let turn_text = document.getElementById('turn');
+    if(player_turn=='b') {
+        turn_text.className = 'bt';
+        turn_text.innerHTML = "BLACK'S TURN";
+    }
+    else {
+        turn_text.className = 'wt';
+        turn_text.innerHTML = "WHITE'S TURN";
+    }  
+}
+
+/*Player turn is controlled by a global variable*/
+function updatePlayerTurn() {
+    
+    if(player_turn=='w') {
+        player_turn='b';
+    }
+    else {
+        player_turn='w';
+    }
+}
+
+/*After every drop event is concluded, the old cell needs to be updated*/
+function updateDOM(target_x , target_y , source_x , source_y) {
+    var table = document.getElementById('myTable');
+    table.rows[target_x].cells[target_y].innerHTML='';
+    table.rows[target_x].cells[target_y].innerHTML=table.rows[source_x].cells[source_y].innerHTML;
+    table.rows[source_x].cells[source_y].innerHTML='';
+}
+
+/*Update logical chess board that maps all pieces*/
+function updateChessBoard(target_x , target_y , source_x , source_y) {
+    chess_board[target_x][target_y] = chess_board[source_x][source_y];
+    chess_board[source_x][source_y] = '00';
+
+}
+
+function check_if_check_begin(source_x = 0, source_y = 0 , target_x = 0, target_y = 0) {
+    let attacking_color = (player_turn=='w') ? 'b' : 'w';
+    let temp_att_squares = [];
+    let defendingking = player_turn+'x';
+    let defendingking_x = 0;
+    let defendingking_y = 0;
+    let attacking_squares = [];
+    let targetpiece = chess_board[target_x][target_y];
+    let sourcepiece = chess_board[source_x][source_y];
+
+    chess_board[target_x][target_y] = sourcepiece;
+    chess_board[source_x][source_y] = '00';
+    
+    for(let i=0;i<8;i++) {
+        for(let j=0;j<8;j++) {
+            if(chess_board[i][j][0]==attacking_color) {
+                temp_att_squares = piece[chess_board[i][j][1]].validMoves(i,j,attacking_color);
+                temp_att_squares.forEach(function (element) {
+                    attacking_squares.push(element);
+                });
+            }
+            if(chess_board[i][j]==defendingking) {
+                defendingking_x = i;
+                defendingking_y = j;
+            }
+            temp_att_squares = [];
+        }
+    }
+    for(let i=0; i<attacking_squares.length;i++) {
+        if(attacking_squares[i][0]==defendingking_x && attacking_squares[i][1]==defendingking_y) {
+            chess_board[source_x][source_y] = sourcepiece;
+            chess_board[target_x][target_y] = targetpiece;
+            return true;
+        }   
+    }
+    chess_board[source_x][source_y] = sourcepiece;
+    chess_board[target_x][target_y] = targetpiece;
+    return false;
+}
+// nice function name :)
+function check_if_check() {
+    let attacking_color = (player_turn=='w') ? 'b' : 'w';
+    let temp_att_squares = [];
+    let defendingking = player_turn+'x';
+    let defendingking_x = 0;
+    let defendingking_y = 0;
+    let attacking_squares = [];
+    for(let i=0;i<8;i++) {
+        for(let j=0;j<8;j++) {
+            if(chess_board[i][j][0]==attacking_color) {
+                temp_att_squares = piece[chess_board[i][j][1]].validMoves(i,j,attacking_color);
+                temp_att_squares.forEach(function (element) {
+                    attacking_squares.push(element);
+                });
+            }
+            if(chess_board[i][j]==defendingking) {
+                defendingking_x = i;
+                defendingking_y = j;
+            }
+            temp_att_squares = [];
+        }
+    }
+    for(let i=0; i<attacking_squares.length;i++) {
+        if(attacking_squares[i][0]==defendingking_x && attacking_squares[i][1]==defendingking_y) {
+            return true;
+        }   
+    }
+    return false;
+}
+
 
 /* Fired when a drag starts*/
 function dragStart(event) {
     source_x = this.parentNode.parentNode.rowIndex;
     source_y = this.parentNode.cellIndex;
-    console.log("Source x =" , source_x);
-    console.log("Source y =" , source_y);
+    // console.log("Source x =" , source_x);
+    // console.log("Source y =" , source_y);
 
     event.dataTransfer.setData("image/svg", event.target.outerHTML);
     source = event.target.outerHTML;
 
    // var data = piece[chess_board[source_x][source_y][1]].validMoves(source_x,source_y,chess_board[source_x][source_y][0]);
-   //console.dir(data);
+   // console.dir(data);
     piece[chess_board[source_x][source_y][1]].validMoves(source_x,source_y,chess_board[source_x][source_y][0]);
-    console.dir("Valid co-ordinates = " , validcoordinates);
+   // console.dir("Valid co-ordinates = " , validcoordinates);
 }
 
 /* Fired when a drag ends*/
@@ -473,39 +569,36 @@ function dragDrop(event) {
     }
     console.log("Player turn = " , turn);
     //console.log(validcoordinates);
-    
-    if (player_turn==turn && exists) {
+     //if(check==true) {
+        check = check_if_check_begin(source_x,source_y,target_x,target_y);
+     //}
+
+    /*If it's correct player's turn and the movement is valid*/
+    if (player_turn==turn && exists && check==false) {
         var data = event.dataTransfer.getData("image/svg");
         //console.dir(data);
         event.target.innerHTML = data;
 
-        /*event.target.addEventListener('dragover',dragOver);
-        event.target.addEventListener('dragenter',dragEnter);
-        event.target.addEventListener('dragleave',dragLeave);
-        event.target.addEventListener('drop',dragDrop);*/
-
+        /*Imgs copied dont have listeners attached automatically,
+        this adds listeners to all piece imgs. Poor implementation tho
+        since it loops through all imgs instead of 'only' the copied image*/
         let imgs = document.getElementsByTagName("img");
         for(i=0;i<imgs.length;i++)
         {
             imgs[i].addEventListener('dragstart', dragStart);
             imgs[i].addEventListener('dragend', dragEnd);
         }
-        if(player_turn=='w') {
-            player_turn='b';
-        }
-        else {
-            player_turn='w';
-        }
-        var table = document.getElementById('myTable');
-        table.rows[target_x].cells[target_y].innerHTML='';
-        table.rows[target_x].cells[target_y].innerHTML=table.rows[source_x].cells[source_y].innerHTML;
-        table.rows[source_x].cells[source_y].innerHTML='';
         
-        chess_board[target_x][target_y] = chess_board[source_x][source_y];
-        chess_board[source_x][source_y] = '00';
+        updatePlayerTurn();
+        updateDOM(target_x , target_y , source_x , source_y)
+        updateChessBoard(target_x , target_y , source_x , source_y);
 
+        /*Update text box and its styles based on player turn*/
         updateturncss(player_turn);
-        
+        check = check_if_check();
+        if(check) {
+            console.log("CHECKKKKK!!!!!!!!!!!!!!!");
+        }
     }
     console.log("Current state of chess board = " , chess_board);
 }
@@ -546,9 +639,8 @@ function display() {
             }
         }
     }
+    /*Add event listeners on every piece image*/
     imgs = document.getElementsByTagName('img');
-    //console.log(imgs);
-
     for(i=0;i<imgs.length;i++)
     {
         imgs[i].addEventListener('dragstart', dragStart);
